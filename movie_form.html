@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Movie Details Form</title>
+    <!-- Importing Inter font for a modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Design System Colors */
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-gradient-start: #e0e7ff;
+            --bg-gradient-end: #c7d2fe;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #d1d5db;
+            --input-bg: #f9fafb;
+            --focus-ring: rgba(99, 102, 241, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            /* Cinematic movie background with a dark, moody overlay for readability */
+            background: linear-gradient(rgba(17, 24, 39, 0.6), rgba(17, 24, 39, 0.9)), 
+                        url('https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=2056&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .form-wrapper {
+            /* Premium Glassmorphism effect */
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 100%;
+            max-width: 600px; /* Increased for wider screens */
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .form-header p {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            transition: all 0.2s ease;
+            appearance: none;
+        }
+
+        /* Custom dropdown arrow for select elements */
+        .input-group select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px var(--focus-ring);
+            background-color: #ffffff;
+        }
+
+        .input-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+
+        @media (min-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            .form-row .input-group {
+                margin-bottom: 22px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .form-wrapper {
+                padding: 48px 56px;
+                max-width: 680px;
+            }
+            
+            .form-header h1 {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .form-wrapper {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
+
+            .form-header h1 {
+                font-size: 24px;
+            }
+            
+            .input-group input,
+            .input-group select {
+                padding: 12px 14px;
+                font-size: 16px; /* Prevents iOS auto-zoom */
+            }
+            
+            .submit-btn {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-wrapper">
+        <div class="form-header">
+            <h1>Movie Details</h1>
+            <p>Enter the information for the film.</p>
+        </div>
+
+        <form id="movieForm" action="#" method="POST">
+            <!-- 2-column layout on larger screens -->
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="filmName">Film Name</label>
+                    <input type="text" id="filmName" name="filmName" placeholder="e.g. The Matrix" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="filmReleaseYear">Film Release Year</label>
+                    <input type="number" id="filmReleaseYear" name="filmReleaseYear" placeholder="e.g. 1999" min="1888" max="2100" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="actorName">Actor Name</label>
+                <input type="text" id="actorName" name="actorName" placeholder="e.g. Keanu Reeves" required>
+            </div>
+
+            <div class="input-group">
+                <label for="filmLanguage">Film Language</label>
+                <select id="filmLanguage" name="filmLanguage" required>
+                    <option value="" disabled selected>Select language</option>
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Tamil">Tamil</option>
+                    <option value="Malayalam">Malayalam</option>
+                    <option value="Telugu">Telugu</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="Korean">Korean</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn" class="submit-btn">Submit Request</button>
+            <div id="statusMessage" style="display: none; margin-top: 15px; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 500;"></div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('movieForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Collect form values
+            const filmName = document.getElementById('filmName').value;
+            const filmReleaseYear = document.getElementById('filmReleaseYear').value;
+            const actorName = document.getElementById('actorName').value;
+            const filmLanguage = document.getElementById('filmLanguage').value;
+
+            const submitBtn = document.getElementById('submitBtn');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Loading state
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+            statusMessage.style.display = 'none';
+
+            // Send data to backend API silently
+            fetch('/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    filmName: filmName,
+                    filmReleaseYear: filmReleaseYear,
+                    actorName: actorName,
+                    filmLanguage: filmLanguage
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success visually
+                    statusMessage.textContent = '✅ Submission saved successfully!';
+                    statusMessage.style.backgroundColor = '#d1fae5';
+                    statusMessage.style.color = '#065f46';
+                    statusMessage.style.display = 'block';
+                    document.getElementById('movieForm').reset();
+                } else {
+                    throw new Error(data.error || 'Failed to submit');
+                }
+            })
+            .catch(error => {
+                // Show error visually
+                statusMessage.textContent = '❌ Error submitting form. Please try again.';
+                statusMessage.style.backgroundColor = '#fee2e2';
+                statusMessage.style.color = '#991b1b';
+                statusMessage.style.display = 'block';
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                // Restore button
+                submitBtn.textContent = 'Submit Request';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+
+</html>

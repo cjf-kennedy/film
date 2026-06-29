@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Submissions</title>
+    <!-- Importing Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .refresh-btn {
+            padding: 10px 16px;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background-color: #4338ca;
+        }
+
+        .table-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f9fafb;
+        }
+
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Submissions Dashboard</h1>
+            <button class="refresh-btn" onclick="fetchSubmissions()">Refresh Data</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Film Name</th>
+                        <th>Release Year</th>
+                        <th>Actor Name</th>
+                        <th>Language</th>
+                        <th>Submission Date & Time</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="5" class="loading">Loading submissions...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Format date string to a readable format
+        function formatDate(dateString) {
+            const options = { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Fetch submissions from the API
+        function fetchSubmissions() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '<tr><td colspan="5" class="loading">Loading submissions...</td></tr>';
+
+            fetch('/api/submissions')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderTable(data.data);
+                    } else {
+                        tableBody.innerHTML = `<tr><td colspan="5" class="empty-state">Error loading data: ${data.error}</td></tr>`;
+                    }
+                })
+                .catch(error => {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="empty-state">Error connecting to server.</td></tr>`;
+                    console.error('Error:', error);
+                });
+        }
+
+        // Render data into the table
+        function renderTable(submissions) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            if (submissions.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="empty-state">No submissions found yet.</td></tr>';
+                return;
+            }
+
+            submissions.forEach(sub => {
+                const tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td style="font-weight: 500;">${sub.filmName}</td>
+                    <td>${sub.filmReleaseYear}</td>
+                    <td>${sub.actorName}</td>
+                    <td><span style="background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 500;">${sub.filmLanguage}</span></td>
+                    <td style="color: #6b7280;">${formatDate(sub.createdAt)}</td>
+                `;
+                
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Fetch data on initial load
+        document.addEventListener('DOMContentLoaded', fetchSubmissions);
+    </script>
+</body>
+</html>
